@@ -5,11 +5,8 @@ project(ArieoEngine)
 
 arieo_engine_project(
     arieo_wasmtime_module
-    ALIAS arieo::modules::scripting::wasmtime
     PROJECT_TYPE module
-    SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/private/src/*.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/private/src/*/*.cpp
+
     PACKAGES
         wasmtime
         Arieo-Interface-Script
@@ -22,8 +19,11 @@ arieo_engine_project(
         Arieo-Interface-Main::arieo_main_interface
         Arieo-Interface-Sample::arieo_sample_interface
     PRIVATE_LIBS
-        arieo::base
-        arieo::core
-        arieo::lib::wasmtime_linker
+        Arieo-Core::arieo_core
+        Arieo-Lib-WasmtimeLinker::arieo_wasmtime_linker_lib
         wasmtime::wasmtime
+
+    SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/private/src/*.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/private/src/*/*.cpp
 )
