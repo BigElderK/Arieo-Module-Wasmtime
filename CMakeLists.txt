@@ -12,6 +12,11 @@ arieo_engine_project(
         ${CMAKE_CURRENT_SOURCE_DIR}/private/src/*/*.cpp
     PACKAGES
         wasmtime
+        Arieo-Interface-Script
+        Arieo-Interface-Main
+        Arieo-Interface-Sample
+        Arieo-Lib-WasmtimeLinker
+        Arieo-Core
     INTERFACES
         Arieo-Interface-Script::arieo_script_interface
         Arieo-Interface-Main::arieo_main_interface
