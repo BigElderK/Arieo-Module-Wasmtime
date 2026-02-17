@@ -2,6 +2,7 @@
 #include "script_manager.h"
 #include "core/core.h"
 #include "core/config/config.h"
+#include "core/manifest/manifest.h"
 
 #include "engine/wasmtime_engine.h"
 #include "interface/sample/sample.h"
@@ -11,34 +12,33 @@ namespace Arieo
     void ScriptManager::onInitialize()
     {
         Interface::Main::IMainModule* main_module = Core::ModuleManager::getInterface<Interface::Main::IMainModule>();
-        Core::ConfigNode&& config_node = Core::ConfigFile::Load(main_module->getManifestContent());
-        if(config_node.IsNull())
-        {
-            Core::Logger::error("Load manifest file failed in ScriptManager");
-            return;
-        }
+        
+        Core::Manifest manifest;
+        manifest.loadFromString(main_module->getManifestContext());
+        Core::ConfigNode system_node = manifest.getSystemNode();
 
         Core::Logger::info("Parsing script info");
-        if(config_node["app"]["script"]["startup_script"].IsDefined() == false)
+        if(system_node["script_entry"].IsDefined() == false)
         {
-            Core::Logger::error("Cannot found 'app.script.startup_script' node in manifest");
+            Core::Logger::error("Cannot found 'app.host_os.{}.script_entry' node in manifest", Core::SystemUtility::getHostOSName());
             return;
         }
 
-        std::string startup_script_path = config_node["app"]["script"]["startup_script"].as<std::string>();
+        std::string script_entry = system_node["script_entry"].as<std::string>();
+
         Core::Logger::info("Parsing startup_script");
         {
-            if(startup_script_path.starts_with("${SCRIPT_DIR}") == false)
+            if(script_entry.starts_with("${SCRIPT_DIR}") == false)
             {
                 Core::Logger::error("'app.startup_script' must start with ${SCRIPT_DIR}");
                 return;
             }
             
             // TODO: Define SCRIPT_DIR in app.manifest.yaml
-            Base::StringUtility::replaceAll(startup_script_path, "${SCRIPT_DIR}", "script");
+            Base::StringUtility::replaceAll(script_entry, "${SCRIPT_DIR}", "script");
 
             std::tuple<void*, size_t> starup_script_path_buffer = main_module->getRootArchive()->getFileBuffer(
-                Core::SystemUtility::FileSystem::getFormalizedPath(startup_script_path)
+                Core::SystemUtility::FileSystem::getFormalizedPath(script_entry)
             );
 
             Interface::Script::IScriptEngine* script_manager = Core::ModuleManager::getInterface<Interface::Script::IScriptEngine>("wasmtime");
@@ -58,19 +58,14 @@ namespace Arieo
             WasmtimeEngine* wasmtime_engine = static_cast<WasmtimeEngine*>(script_manager);
             wasmtime::component::Linker* linker = static_cast<wasmtime::component::Linker*>(wasmtime_engine->getLinker());
 
-
-
             // Load all interface linkers defined in app.manifest.yaml
             {
-                if(config_node["app"]["script"]["linkers"].IsDefined())
+                if(system_node["linkers"].IsDefined())
                 {
                     Core::Logger::info("Loading interface linkers");
-                                        
-                    // Get version checksum (can be used for compatibility checking)
-                    std::uint64_t version_checksum = 0; // TODO: Calculate actual version checksum
                     
                     // Iterate through each linker in the manifest
-                    const auto& linkers_node = config_node["app"]["script"]["linkers"];
+                    const auto& linkers_node = system_node["linkers"];
                     for(size_t i = 0; i < linkers_node.size(); ++i)
                     {
                         std::string linker_lib_path = linkers_node[i].as<std::string>();                        
