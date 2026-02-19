@@ -8,13 +8,13 @@ arieo_engine_project(
     PROJECT_TYPE module
 
     DEPENDENCIES
-        PACKAGES
-            wasmtime
-            Arieo-Interface-Script
-            Arieo-Interface-Main
-            Arieo-Interface-Sample
-            Arieo-Lib-WasmtimeLinker
+        ARIEO_PACKAGES
             Arieo-Core
+            Arieo-Lib-WasmtimeLinker
+            Arieo-Interface-Script
+            Arieo-Interface-Sample
+        THIRDPARTY_PACKAGES
+            wasmtime
         INTERFACES
             Arieo-Interface-Script::arieo_script_interface
             Arieo-Interface-Main::arieo_main_interface
@@ -26,6 +26,6 @@ arieo_engine_project(
 
     SOURCES
         CXX_SOURCES
-            ${CMAKE_CURRENT_SOURCE_DIR}/private/src/*.cpp
-            ${CMAKE_CURRENT_SOURCE_DIR}/private/src/*/*.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/private/src/*.cpp
+            ${CMAKE_CURRENT_LIST_DIR}/private/src/*/*.cpp
 )
