@@ -1,9 +1,18 @@
 cmake_minimum_required (VERSION 3.31)
 
 include($ENV{ARIEO_BUILD_ENV_PACKAGES_OUTPUT_DIR}/cmake/build_environment.cmake)
-project(ArieoEngine)
 
-arieo_engine_project(
+ARIEO_PACKAGE(
+    Arieo-Module-Wasmtime
+    CATEGORY 02_engine
+    DEPENDS
+        https://github.com/BigElderK/Arieo-Core.git@main
+        https://github.com/BigElderK/Arieo-Lib-WasmtimeLinker.git@main
+        https://github.com/BigElderK/Arieo-Interface-Script.git@main
+        https://github.com/BigElderK/Arieo-Interface-Sample.git@main
+)
+
+ARIEO_ENGINE_PROJECT(
     arieo_wasmtime_module
     PROJECT_TYPE module
 
@@ -15,11 +24,10 @@ arieo_engine_project(
             Arieo-Interface-Sample
         THIRDPARTY_PACKAGES
             wasmtime
-        INTERFACES
+        PRIVATE_LIBS
             Arieo-Interface-Script::arieo_script_interface
             Arieo-Interface-Main::arieo_main_interface
             Arieo-Interface-Sample::arieo_sample_interface
-        PRIVATE_LIBS
             Arieo-Core::arieo_core
             Arieo-Lib-WasmtimeLinker::arieo_wasmtime_linker_lib
             wasmtime::wasmtime
