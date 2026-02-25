@@ -227,7 +227,7 @@ namespace Arieo
 
     void WasmtimeEngine::destroyContext(Base::Interface<Interface::Script::IContext> context)
     {
-        WasmtimeContext* wasmtime_context = Base::castInterfaceToInstance<WasmtimeContext>(context);
+        WasmtimeContext* wasmtime_context = context.castTo<WasmtimeContext>();
         Base::deleteT(wasmtime_context);
         Core::Logger::info("Destroying Wasmtime script context");
     }
@@ -261,15 +261,15 @@ namespace Arieo
     void WasmtimeEngine::unloadModule(Base::Interface<Interface::Script::IModule> module)
     {
         Core::Logger::info("Unloading Wasmtime script module");
-        WasmtimeModule* wasmtime_module = Base::castInterfaceToInstance<WasmtimeModule>(module);
+        WasmtimeModule* wasmtime_module = module.castTo<WasmtimeModule>();
         Base::deleteT(wasmtime_module);
     }
 
     Base::Interface<Interface::Script::IInstance> WasmtimeEngine::createInstance(Base::Interface<Interface::Script::IContext> context, Base::Interface<Interface::Script::IModule> module)
     {
         Core::Logger::info("Creating Wasmtime script instance");
-        WasmtimeContext* wasmtime_context = Base::castInterfaceToInstance<WasmtimeContext>(context);
-        WasmtimeModule* wasmtime_module = Base::castInterfaceToInstance<WasmtimeModule>(module);
+        WasmtimeContext* wasmtime_context = context.castTo<WasmtimeContext>();
+        WasmtimeModule* wasmtime_module = module.castTo<WasmtimeModule>();
 
         // Instantiate the component and verify it exports the guest interface
         wasmtime::component::Instance instance = m_linker->instantiate(wasmtime_context->m_store.context(), wasmtime_module->m_component).unwrap();
@@ -307,7 +307,7 @@ namespace Arieo
     void WasmtimeEngine::destroyInstance(Base::Interface<Interface::Script::IInstance> instance)
     {
         Core::Logger::info("Destroying Wasmtime script instance");
-        WasmtimeInstance* wasmtime_instance = Base::castInterfaceToInstance<WasmtimeInstance>(instance);
+        WasmtimeInstance* wasmtime_instance = instance.castTo<WasmtimeInstance>();
         Base::deleteT(wasmtime_instance);
     }
 }

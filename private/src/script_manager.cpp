@@ -55,7 +55,7 @@ namespace Arieo
             );
 
             // Get the linker pointer from wasmtime engine (requires casting to access private member)
-            // WasmtimeEngine* wasmtime_engine = Base::castInterfaceToInstance<WasmtimeEngine>(script_manager);
+            // WasmtimeEngine* wasmtime_engine = script_manager.castTo<WasmtimeEngine>();
             // wasmtime::component::Linker* linker = static_cast<wasmtime::component::Linker*>(wasmtime_engine->getLinker());
 
             // Load all interface linkers defined in app.manifest.yaml
