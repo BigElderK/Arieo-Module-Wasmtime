@@ -24,13 +24,13 @@ ARIEO_DLLEXPORT void ModuleMain()
                 &wasmtime_engine
             );
 
-            Interface::Main::IMainModule* main_module = Core::ModuleManager::getInterface<Interface::Main::IMainModule>();
+            Base::Interface<Interface::Main::IMainModule> main_module = Core::ModuleManager::getInterface<Interface::Main::IMainModule>();
             main_module->registerTickable(&script_manager);
         }
 
         ~DllLoader()
         {
-            Interface::Main::IMainModule* main_module = Core::ModuleManager::getInterface<Interface::Main::IMainModule>();
+            Base::Interface<Interface::Main::IMainModule> main_module = Core::ModuleManager::getInterface<Interface::Main::IMainModule>();
             main_module->unregisterTickable(&script_manager);
 
             Core::ModuleManager::unregisterInterface<Interface::Script::IScriptEngine>(

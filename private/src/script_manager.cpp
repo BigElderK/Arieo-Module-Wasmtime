@@ -11,7 +11,7 @@ namespace Arieo
 {
     void ScriptManager::onInitialize()
     {
-        Interface::Main::IMainModule* main_module = Core::ModuleManager::getInterface<Interface::Main::IMainModule>();
+        Base::Interface<Interface::Main::IMainModule> main_module = Core::ModuleManager::getInterface<Interface::Main::IMainModule>();
         
         Core::Manifest manifest;
         manifest.loadFromString(main_module->getManifestContext());
@@ -41,22 +41,22 @@ namespace Arieo
                 Core::SystemUtility::FileSystem::getFormalizedPath(script_entry)
             );
 
-            Interface::Script::IScriptEngine* script_manager = Core::ModuleManager::getInterface<Interface::Script::IScriptEngine>("wasmtime");
+            Base::Interface<Interface::Script::IScriptEngine> script_manager = Core::ModuleManager::getInterface<Interface::Script::IScriptEngine>("wasmtime");
             if(script_manager == nullptr)
             {
                 Core::Logger::error("Cannot found script engine module: wasmtime");
                 return;
             }
 
-            Arieo::Interface::Script::IContext* script_context = script_manager->createContext();
-            Interface::Script::IModule* script_module = script_manager->loadModuleFromCompiledBinary(
+            Base::Interface<Arieo::Interface::Script::IContext> script_context = script_manager->createContext();
+            Base::Interface<Interface::Script::IModule> script_module = script_manager->loadModuleFromCompiledBinary(
                 std::get<0>(starup_script_path_buffer),
                 std::get<1>(starup_script_path_buffer)
             );
 
             // Get the linker pointer from wasmtime engine (requires casting to access private member)
-            WasmtimeEngine* wasmtime_engine = static_cast<WasmtimeEngine*>(script_manager);
-            wasmtime::component::Linker* linker = static_cast<wasmtime::component::Linker*>(wasmtime_engine->getLinker());
+            // WasmtimeEngine* wasmtime_engine = Base::castInterfaceToInstance<WasmtimeEngine>(script_manager);
+            // wasmtime::component::Linker* linker = static_cast<wasmtime::component::Linker*>(wasmtime_engine->getLinker());
 
             // Load all interface linkers defined in app.manifest.yaml
             {
@@ -88,7 +88,7 @@ namespace Arieo
             //     linkInterfaces(&linker, 0);
             // }
 
-            Interface::Script::IInstance* script_instance = script_manager->createInstance(
+            Base::Interface<Interface::Script::IInstance> script_instance = script_manager->createInstance(
                 script_context,
                 script_module
             );
