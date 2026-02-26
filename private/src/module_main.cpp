@@ -12,29 +12,29 @@ ARIEO_DLLEXPORT void ModuleMain()
 
     static struct DllLoader
     {
-        WasmtimeEngine wasmtime_engine;
-        ScriptManager script_manager;
+        Base::Instance<WasmtimeEngine> wasmtime_engine;
+        Base::Instance<ScriptManager> script_manager;
 
         DllLoader()
         {
             wasmtime_engine.initialize();
 
-            Core::ModuleManager::registerInterface<Interface::Script::IScriptEngine>(
+            Core::ModuleManager::registerInstance<Interface::Script::IScriptEngine, WasmtimeEngine>(
                 "wasmtime", 
-                &wasmtime_engine
+                wasmtime_engine
             );
 
             Base::Interface<Interface::Main::IMainModule> main_module = Core::ModuleManager::getInterface<Interface::Main::IMainModule>();
-            main_module->registerTickable(&script_manager);
+            main_module->registerTickable(script_manager->queryInterface<Interface::Main::ITickable>());
         }
 
         ~DllLoader()
         {
             Base::Interface<Interface::Main::IMainModule> main_module = Core::ModuleManager::getInterface<Interface::Main::IMainModule>();
-            main_module->unregisterTickable(&script_manager);
+            main_module->unregisterTickable(script_manager->queryInterface<Interface::Main::ITickable>());
 
-            Core::ModuleManager::unregisterInterface<Interface::Script::IScriptEngine>(
-                &wasmtime_engine
+            Core::ModuleManager::unregisterInstance<Interface::Script::IScriptEngine, WasmtimeEngine>(
+                wasmtime_engine
             );
             wasmtime_engine.shutdown();
         }
