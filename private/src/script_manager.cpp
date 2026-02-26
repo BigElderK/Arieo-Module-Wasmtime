@@ -37,7 +37,7 @@ namespace Arieo
             // TODO: Define SCRIPT_DIR in app.manifest.yaml
             Base::StringUtility::replaceAll(script_entry, "${SCRIPT_DIR}", "script");
 
-            Interface::Archive::FileBuffer starup_script_path_buffer = main_module->getRootArchive()->getFileBuffer(
+            auto starup_script_file = main_module->getRootArchive()->aquireFileBuffer(
                 Core::SystemUtility::FileSystem::getFormalizedPath(script_entry)
             );
 
@@ -50,9 +50,10 @@ namespace Arieo
 
             Base::Interface<Arieo::Interface::Script::IContext> script_context = script_manager->createContext();
             Base::Interface<Interface::Script::IModule> script_module = script_manager->loadModuleFromCompiledBinary(
-                starup_script_path_buffer.buffer,
-                starup_script_path_buffer.size
+                starup_script_file->getBuffer(),
+                starup_script_file->getBufferSize()
             );
+            main_module->getRootArchive()->releaseFileBuffer(starup_script_file);
 
             // Get the linker pointer from wasmtime engine (requires casting to access private member)
             // WasmtimeEngine* wasmtime_engine = script_manager.castTo<WasmtimeEngine>();
