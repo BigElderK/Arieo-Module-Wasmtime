@@ -21,3 +21,7 @@ namespace Arieo
         wasmtime::component::Component m_component;
     };
 }
+
+
+
+

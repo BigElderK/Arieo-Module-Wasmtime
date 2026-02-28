@@ -24,13 +24,13 @@ ARIEO_DLLEXPORT void ModuleMain()
                 wasmtime_engine
             );
 
-            Base::InteropOld<Interface::Main::IMainModule> main_module = Core::ModuleManager::getInterface<Interface::Main::IMainModule>();
+            Base::Interop::RawRef<Interface::Main::IMainModule> main_module = Core::ModuleManager::getInterface<Interface::Main::IMainModule>();
             main_module->registerTickable(script_manager->queryInterface<Interface::Main::ITickable>());
         }
 
         ~DllLoader()
         {
-            Base::InteropOld<Interface::Main::IMainModule> main_module = Core::ModuleManager::getInterface<Interface::Main::IMainModule>();
+            Base::Interop::RawRef<Interface::Main::IMainModule> main_module = Core::ModuleManager::getInterface<Interface::Main::IMainModule>();
             main_module->unregisterTickable(script_manager->queryInterface<Interface::Main::ITickable>());
 
             Core::ModuleManager::unregisterInstance<Interface::Script::IScriptEngine, WasmtimeEngine>(
@@ -40,3 +40,7 @@ ARIEO_DLLEXPORT void ModuleMain()
         }
     } dll_loader;
 }
+
+
+
+

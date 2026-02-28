@@ -219,25 +219,25 @@ namespace Arieo
         }
     }
 
-    Base::InteropOld<Interface::Script::IContext> WasmtimeEngine::createContext()
+    Base::Interop::RawRef<Interface::Script::IContext> WasmtimeEngine::createContext()
     {
         Core::Logger::info("Creating Wasmtime script context");
         return Base::newT<WasmtimeContext>(*m_engine);
     }
 
-    void WasmtimeEngine::destroyContext(Base::InteropOld<Interface::Script::IContext> context)
+    void WasmtimeEngine::destroyContext(Base::Interop::RawRef<Interface::Script::IContext> context)
     {
-        WasmtimeContext* wasmtime_context = context.castTo<WasmtimeContext>();
+        WasmtimeContext* wasmtime_context = context.castToInstance<WasmtimeContext>();
         Base::deleteT(wasmtime_context);
         Core::Logger::info("Destroying Wasmtime script context");
     }
 
-    Base::InteropOld<Interface::Script::IModule> WasmtimeEngine::loadModuleFromWatString(const std::string& wat_string)
+    Base::Interop::RawRef<Interface::Script::IModule> WasmtimeEngine::loadModuleFromWatString(const std::string& wat_string)
     {   
         return nullptr;
     }
 
-    Base::InteropOld<Interface::Script::IModule> WasmtimeEngine::loadModuleFromCompiledBinary(void* binary_data, size_t data_size)
+    Base::Interop::RawRef<Interface::Script::IModule> WasmtimeEngine::loadModuleFromCompiledBinary(void* binary_data, size_t data_size)
     {
         if (!binary_data || data_size == 0)
         {
@@ -258,18 +258,18 @@ namespace Arieo
         return Base::newT<WasmtimeModule>(compile_result.unwrap());
     }
 
-    void WasmtimeEngine::unloadModule(Base::InteropOld<Interface::Script::IModule> module)
+    void WasmtimeEngine::unloadModule(Base::Interop::RawRef<Interface::Script::IModule> module)
     {
         Core::Logger::info("Unloading Wasmtime script module");
-        WasmtimeModule* wasmtime_module = module.castTo<WasmtimeModule>();
+        WasmtimeModule* wasmtime_module = module.castToInstance<WasmtimeModule>();
         Base::deleteT(wasmtime_module);
     }
 
-    Base::InteropOld<Interface::Script::IInstance> WasmtimeEngine::createInstance(Base::InteropOld<Interface::Script::IContext> context, Base::InteropOld<Interface::Script::IModule> module)
+    Base::Interop::RawRef<Interface::Script::IInstance> WasmtimeEngine::createInstance(Base::Interop::RawRef<Interface::Script::IContext> context, Base::Interop::RawRef<Interface::Script::IModule> module)
     {
         Core::Logger::info("Creating Wasmtime script instance");
-        WasmtimeContext* wasmtime_context = context.castTo<WasmtimeContext>();
-        WasmtimeModule* wasmtime_module = module.castTo<WasmtimeModule>();
+        WasmtimeContext* wasmtime_context = context.castToInstance<WasmtimeContext>();
+        WasmtimeModule* wasmtime_module = module.castToInstance<WasmtimeModule>();
 
         // Instantiate the component and verify it exports the guest interface
         wasmtime::component::Instance instance = m_linker->instantiate(wasmtime_context->m_store.context(), wasmtime_module->m_component).unwrap();
@@ -304,10 +304,14 @@ namespace Arieo
         return wasmtime_instance;
     }
 
-    void WasmtimeEngine::destroyInstance(Base::InteropOld<Interface::Script::IInstance> instance)
+    void WasmtimeEngine::destroyInstance(Base::Interop::RawRef<Interface::Script::IInstance> instance)
     {
         Core::Logger::info("Destroying Wasmtime script instance");
-        WasmtimeInstance* wasmtime_instance = instance.castTo<WasmtimeInstance>();
+        WasmtimeInstance* wasmtime_instance = instance.castToInstance<WasmtimeInstance>();
         Base::deleteT(wasmtime_instance);
     }
 }
+
+
+
+
