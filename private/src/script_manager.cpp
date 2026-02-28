@@ -39,7 +39,7 @@ namespace Arieo
             Base::StringUtility::replaceAll(script_entry, "${SCRIPT_DIR}", "script");
 
             auto starup_script_file = main_module->getRootArchive()->aquireFileBuffer(
-                Core::SystemUtility::FileSystem::getFormalizedPath(script_entry)
+                Core::SystemUtility::FileSystem::getFormalizedPath(script_entry).string()
             );
 
             Base::Interop::RawRef<Interface::Script::IScriptEngine> script_manager = Core::ModuleManager::getInterface<Interface::Script::IScriptEngine>("wasmtime");
