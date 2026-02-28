@@ -24,15 +24,15 @@ namespace Arieo
 
         void initInterfaceLinkers(const std::filesystem::path& lib_file_path) override;
 
-        Base::Interop<Interface::Script::IContext> createContext() override;
-        void destroyContext(Base::Interop<Interface::Script::IContext> context) override; 
+        Base::InteropOld<Interface::Script::IContext> createContext() override;
+        void destroyContext(Base::InteropOld<Interface::Script::IContext> context) override; 
 
-        Base::Interop<Interface::Script::IModule> loadModuleFromWatString(const std::string& wat_string) override;
-        Base::Interop<Interface::Script::IModule> loadModuleFromCompiledBinary(void* binary_data, size_t data_size) override;
-        void unloadModule(Base::Interop<Interface::Script::IModule> module) override;
+        Base::InteropOld<Interface::Script::IModule> loadModuleFromWatString(const std::string& wat_string) override;
+        Base::InteropOld<Interface::Script::IModule> loadModuleFromCompiledBinary(void* binary_data, size_t data_size) override;
+        void unloadModule(Base::InteropOld<Interface::Script::IModule> module) override;
 
-        Base::Interop<Interface::Script::IInstance> createInstance(Base::Interop<Interface::Script::IContext> context, Base::Interop<Interface::Script::IModule> module) override;
-        void destroyInstance(Base::Interop<Interface::Script::IInstance> instance) override;
+        Base::InteropOld<Interface::Script::IInstance> createInstance(Base::InteropOld<Interface::Script::IContext> context, Base::InteropOld<Interface::Script::IModule> module) override;
+        void destroyInstance(Base::InteropOld<Interface::Script::IInstance> instance) override;
 
         // Get the wasmtime linker for interface registration
         void* getLinker() { return m_linker; }

@@ -11,10 +11,10 @@ namespace Arieo
 {
     void ScriptManager::onInitialize()
     {
-        Base::Interop<Interface::Main::IMainModule> main_module = Core::ModuleManager::getInterface<Interface::Main::IMainModule>();
+        Base::InteropOld<Interface::Main::IMainModule> main_module = Core::ModuleManager::getInterface<Interface::Main::IMainModule>();
         
         Core::Manifest manifest;
-        Base::Interop<std::string_view> manifest_rv = main_module->getManifestContext();
+        Base::InteropOld<std::string_view> manifest_rv = main_module->getManifestContext();
         manifest.loadFromString(manifest_rv.getString());
         Core::ConfigNode system_node = manifest.getSystemNode();
 
@@ -42,15 +42,15 @@ namespace Arieo
                 Core::SystemUtility::FileSystem::getFormalizedPath(script_entry)
             );
 
-            Base::Interop<Interface::Script::IScriptEngine> script_manager = Core::ModuleManager::getInterface<Interface::Script::IScriptEngine>("wasmtime");
+            Base::InteropOld<Interface::Script::IScriptEngine> script_manager = Core::ModuleManager::getInterface<Interface::Script::IScriptEngine>("wasmtime");
             if(script_manager == nullptr)
             {
                 Core::Logger::error("Cannot found script engine module: wasmtime");
                 return;
             }
 
-            Base::Interop<Arieo::Interface::Script::IContext> script_context = script_manager->createContext();
-            Base::Interop<Interface::Script::IModule> script_module = script_manager->loadModuleFromCompiledBinary(
+            Base::InteropOld<Arieo::Interface::Script::IContext> script_context = script_manager->createContext();
+            Base::InteropOld<Interface::Script::IModule> script_module = script_manager->loadModuleFromCompiledBinary(
                 starup_script_file->getBuffer(),
                 starup_script_file->getBufferSize()
             );
@@ -90,7 +90,7 @@ namespace Arieo
             //     linkInterfaces(&linker, 0);
             // }
 
-            Base::Interop<Interface::Script::IInstance> script_instance = script_manager->createInstance(
+            Base::InteropOld<Interface::Script::IInstance> script_instance = script_manager->createInstance(
                 script_context,
                 script_module
             );
