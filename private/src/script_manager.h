@@ -14,7 +14,7 @@ namespace Arieo
     /**
      * @brief Wasmtime-based scripting engine implementation
      */
-    class ScriptManager
+    class ScriptManager final
         : public Interface::Main::ITickable
     {
     public:

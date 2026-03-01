@@ -14,7 +14,7 @@ namespace Arieo
     /**
      * @brief Wasmtime-based scripting engine implementation
      */
-    class WasmtimeEngine
+    class WasmtimeEngine final
         : public Interface::Script::IScriptEngine
     {
     public:

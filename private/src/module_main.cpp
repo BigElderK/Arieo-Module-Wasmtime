@@ -12,31 +12,33 @@ ARIEO_DLLEXPORT void ModuleMain()
 
     static struct DllLoader
     {
-        Base::Instance<WasmtimeEngine> wasmtime_engine;
-        Base::Instance<ScriptManager> script_manager;
+        WasmtimeEngine wasmtime_engine_instance;
+        Base::Interop::SharedRef<Interface::Script::IScriptEngine> wasmtime_engine = Base::Interop::makePersistentShared<Interface::Script::IScriptEngine>(wasmtime_engine_instance);
+        ScriptManager script_manager_instance;
+        Base::Interop::SharedRef<Interface::Main::ITickable> script_manager = Base::Interop::makePersistentShared<Interface::Main::ITickable>(script_manager_instance);
 
         DllLoader()
         {
-            wasmtime_engine.initialize();
+            wasmtime_engine_instance.initialize();
 
-            Core::ModuleManager::registerInstance<Interface::Script::IScriptEngine, WasmtimeEngine>(
-                "wasmtime", 
+            Core::ModuleManager::registerInterface<Interface::Script::IScriptEngine>(
+                "wasmtime",
                 wasmtime_engine
             );
 
-            Base::Interop::RawRef<Interface::Main::IMainModule> main_module = Core::ModuleManager::getInterface<Interface::Main::IMainModule>();
-            main_module->registerTickable(script_manager->queryInterface<Interface::Main::ITickable>());
+            Base::Interop::SharedRef<Interface::Main::IMainModule> main_module = Core::ModuleManager::getInterface<Interface::Main::IMainModule>();
+            main_module->registerTickable(script_manager);
         }
 
         ~DllLoader()
         {
-            Base::Interop::RawRef<Interface::Main::IMainModule> main_module = Core::ModuleManager::getInterface<Interface::Main::IMainModule>();
-            main_module->unregisterTickable(script_manager->queryInterface<Interface::Main::ITickable>());
+            Base::Interop::SharedRef<Interface::Main::IMainModule> main_module = Core::ModuleManager::getInterface<Interface::Main::IMainModule>();
+            main_module->unregisterTickable(script_manager);
 
-            Core::ModuleManager::unregisterInstance<Interface::Script::IScriptEngine, WasmtimeEngine>(
+            Core::ModuleManager::unregisterInterface<Interface::Script::IScriptEngine>(
                 wasmtime_engine
             );
-            wasmtime_engine.shutdown();
+            wasmtime_engine_instance.shutdown();
         }
     } dll_loader;
 }

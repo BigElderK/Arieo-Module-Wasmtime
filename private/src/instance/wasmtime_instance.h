@@ -9,7 +9,7 @@ namespace Arieo
     /**
      * @brief Wasmtime-based script module implementation
      */
-    class WasmtimeInstance 
+    class WasmtimeInstance final
         : public Interface::Script::IInstance
     {
     public:

@@ -8,7 +8,7 @@ namespace Arieo
     /**
      * @brief Wasmtime-based script module implementation
      */
-    class WasmtimeModule : public Interface::Script::IModule
+    class WasmtimeModule final : public Interface::Script::IModule
     {
     public:
         WasmtimeModule(wasmtime::component::Component&& component)

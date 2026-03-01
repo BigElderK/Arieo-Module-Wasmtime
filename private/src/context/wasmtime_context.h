@@ -8,7 +8,7 @@ namespace Arieo
     /**
      * @brief Wasmtime-based script context implementation
      */
-    class WasmtimeContext 
+    class WasmtimeContext final
         : public Interface::Script::IContext
     {
     public:
